@@ -258,7 +258,7 @@ class SlackTextMessage extends TextMessage
           return cb(error) if error
           done(message)
         else
-          done(message)
+          return "Sorry this command will execute only in teststuff channel"
 
 exports.SlackTextMessage = SlackTextMessage
 exports.ReactionMessage = ReactionMessage
