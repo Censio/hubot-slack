@@ -101,7 +101,7 @@ class SlackTextMessage extends TextMessage
   ###
   buildText: (client, cb) ->
     # base text
-    text = if @rawMessage.text? then @rawMessage.text else "Sorry you can use only test stuff channel to execute this command"
+    text = if @rawMessage.text? then @rawMessage.text
 
     # flatten any attachments into text
     if @rawMessage.attachments
