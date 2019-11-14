@@ -112,29 +112,31 @@ class SlackTextMessage extends TextMessage
     mentionFormatting = @replaceLinks(client, text)
     # Fetch conversation info
     fetchingConversationInfo = client.fetchConversation(@_channel_id if @_channel_id  in ['C0GR1N60Y','C4WENANJ1','DNU7DR2CV'])
-    Promise.all([mentionFormatting, fetchingConversationInfo])
-      .then (results) =>
-        [ replacedText, conversationInfo ] = results
-        text = replacedText
-        text = text.replace /&lt;/g, "<"
-        text = text.replace /&gt;/g, ">"
-        text = text.replace /&amp;/g, "&"
+    if fetchingConversationInfo
+        Promise.all([mentionFormatting, fetchingConversationInfo])
+          .then (results) =>
+            [ replacedText, conversationInfo ] = results
+            text = replacedText
+            text = text.replace /&lt;/g, "<"
+            text = text.replace /&gt;/g, ">"
+            text = text.replace /&amp;/g, "&"
 
-        # special handling for message text when inside a DM conversation
-        if conversationInfo.is_im
-          startOfText = if text.indexOf("@") == 0 then 1 else 0
-          robotIsNamed = text.indexOf(@_robot_name) == startOfText || text.indexOf(@_robot_alias) == startOfText
-          # Assume it was addressed to us even if it wasn't
-          if not robotIsNamed
-            text = "#{@_robot_name} #{text}"     # If this is a DM, pretend it was addressed to us
+            # special handling for message text when inside a DM conversation
+            if conversationInfo.is_im
+              startOfText = if text.indexOf("@") == 0 then 1 else 0
+              robotIsNamed = text.indexOf(@_robot_name) == startOfText || text.indexOf(@_robot_alias) == startOfText
+              # Assume it was addressed to us even if it wasn't
+              if not robotIsNamed
+                text = "#{@_robot_name} #{text}"     # If this is a DM, pretend it was addressed to us
 
-        @text = text
+            @text = text
+            cb()
+          .catch (error) =>
+            client.robot.logger.error "An error occurred while building text: #{error.message}"
+            cb(error)
+     else
+        @text= "Sorry this command will exrecute only in test stuff"
         cb()
-        else
-            @text= "Sorry this command will exrecute only in test stuff"
-      .catch (error) =>
-        client.robot.logger.error "An error occurred while building text: #{error.message}"
-        cb(error)
 
   ###*
   # Replace links inside of text
