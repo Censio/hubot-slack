@@ -20,7 +20,6 @@ class SlackBot extends Adapter
     @robot.logger.info "hubot-slack adapter v#{pkg.version}"
     @client = new SlackClient @options, @robot
 
-
   ###
   # Hubot Adapter methods
   ###
@@ -310,8 +309,7 @@ class SlackBot extends Adapter
 
 
     # NOTE: we may want to wrap all other incoming events as a generic Message
-    else
-        return "Sorry this command will execute only in teststuff channel"
+    # else
 
   ###*
   # Callback for fetching all users in workspace. Delegates to `updateUserInBrain()` to write all users to Hubot brain
