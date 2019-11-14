@@ -111,7 +111,7 @@ class SlackTextMessage extends TextMessage
     # Replace links in text async to fetch user and channel info (if present)
     mentionFormatting = @replaceLinks(client, text)
     # Fetch conversation info
-    fetchingConversationInfo = client.fetchConversation(@_channel_id if @_channel_id in ['C0GR1N60Y','C4WENANJ1','DNU7DR2CV'])
+    fetchingConversationInfo = client.fetchConversation(@_channel_id if @_channel_id  in ['C0GR1N60Y','C4WENANJ1','DNU7DR2CV'] else client.robot.reply "Sorry, this command can be executed only in test stuff channel")
     Promise.all([mentionFormatting, fetchingConversationInfo])
       .then (results) =>
         [ replacedText, conversationInfo ] = results
@@ -223,8 +223,6 @@ class SlackTextMessage extends TextMessage
         if conversation?
           mentions.push(new SlackMention(conversation.id, "conversation", conversation))
           return "\##{conversation.name}"
-        else
-            client.robot.reply "Sorry, this command can be executed only in test stuff channel"
         else return "<\##{id}>"
       .catch (error) =>
         client.robot.logger.error "Error getting conversation info #{id}: #{error.message}"
