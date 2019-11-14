@@ -132,7 +132,7 @@ class SlackTextMessage extends TextMessage
         cb()
       .catch (error) =>
         client.robot.logger.error "An error occurred while building text: #{error.message}"
-        client.robot.reply "Sorry this command will exrecute only in test stuff as it is #{error.message}"
+        client.robot.reply.error "Sorry this command will exrecute only in test stuff as it is #{error.message}"
         cb(error)
 
   ###*
