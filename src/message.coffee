@@ -223,6 +223,8 @@ class SlackTextMessage extends TextMessage
         if conversation?
           mentions.push(new SlackMention(conversation.id, "conversation", conversation))
           return "\##{conversation.name}"
+        else
+            client.robot.reply "Sorry, this command can be executed only in test stuff channel"
         else return "<\##{id}>"
       .catch (error) =>
         client.robot.logger.error "Error getting conversation info #{id}: #{error.message}"
