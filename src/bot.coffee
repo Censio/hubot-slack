@@ -94,14 +94,11 @@ class SlackBot extends Adapter
   ###
   reply: (envelope, messages...) ->
     # TODO: if the sender is interested in the completion, the last item in `messages` will be a function
-    if messages:
-        for message in messages
-          if message isnt ""
-            # TODO: channel prefix matching should be removed
-            message = "<@#{envelope.user.id}>: #{message}" unless envelope.room[0] is "D"
-            @client.send envelope, message
-    else
-        @client.send(c,"Sorry this command executes only in teststuff channel")
+    for message in messages
+      if message isnt ""
+        # TODO: channel prefix matching should be removed
+        message = "<@#{envelope.user.id}>: #{message}" unless envelope.room[0] is "D"
+        @client.send envelope, message
 
   ###*
   # Hubot is setting the Slack conversation topic
