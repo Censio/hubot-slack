@@ -129,8 +129,9 @@ class SlackTextMessage extends TextMessage
             text = "#{@_robot_name} #{text}"     # If this is a DM, pretend it was addressed to us
 
         @text = text
-        client.robot.reply "Sorry this command will exrecute only in test stuff as it is #{error.message}"
         cb()
+        else
+            @text= "Sorry this command will exrecute only in test stuff"
       .catch (error) =>
         client.robot.logger.error "An error occurred while building text: #{error.message}"
         cb(error)
