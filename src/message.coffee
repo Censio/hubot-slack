@@ -101,7 +101,7 @@ class SlackTextMessage extends TextMessage
   ###
   buildText: (client, cb) ->
     # base text
-    text = if @rawMessage.text? then @rawMessage.text else "Sorry this command works only in teststuff channel"
+    text = if @rawMessage.text? then @rawMessage.text
 
     # flatten any attachments into text
     if @rawMessage.attachments
@@ -249,17 +249,6 @@ class SlackTextMessage extends TextMessage
   ###
   @makeSlackTextMessage: (user, text, rawText, rawMessage, channel_id, robot_name, robot_alias, client, cb) ->
     if channel_id in ['C0GR1N60Y','C4WENANJ1','DNU7DR2CV']
-        message = new SlackTextMessage(user, text, rawText, rawMessage, channel_id, robot_name, robot_alias)
-
-        # creates a completion function that consistently calls the callback after this function has returned
-        done = (message) -> setImmediate(() -> cb(null, message))
-
-        if not message.text? then message.buildText client, (error) ->
-          return cb(error) if error
-          done(message)
-        else
-          done(message)
-    else
         message = new SlackTextMessage(user, text, rawText, rawMessage, channel_id, robot_name, robot_alias)
 
         # creates a completion function that consistently calls the callback after this function has returned
