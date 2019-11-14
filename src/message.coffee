@@ -111,25 +111,22 @@ class SlackTextMessage extends TextMessage
     # Replace links in text async to fetch user and channel info (if present)
     mentionFormatting = @replaceLinks(client, text)
     # Fetch conversation info
-    if @_channel_id in ['C0GR1N60Y','C4WENANJ1','DNU7DR2CV']
-        fetchingConversationInfo = client.fetchConversation(@_channel_id)
-        Promise.all([mentionFormatting, fetchingConversationInfo])
-          .then (results) =>
-            [ replacedText, conversationInfo ] = results
-            text = replacedText
-            text = text.replace /&lt;/g, "<"
-            text = text.replace /&gt;/g, ">"
-            text = text.replace /&amp;/g, "&"
+    fetchingConversationInfo = client.fetchConversation(@_channel_id if @_channel_id in ['C0GR1N60Y','C4WENANJ1','DNU7DR2CV'])
+    Promise.all([mentionFormatting, fetchingConversationInfo])
+      .then (results) =>
+        [ replacedText, conversationInfo ] = results
+        text = replacedText
+        text = text.replace /&lt;/g, "<"
+        text = text.replace /&gt;/g, ">"
+        text = text.replace /&amp;/g, "&"
 
-            # special handling for message text when inside a DM conversation
-            if conversationInfo.is_im
-              startOfText = if text.indexOf("@") == 0 then 1 else 0
-              robotIsNamed = text.indexOf(@_robot_name) == startOfText || text.indexOf(@_robot_alias) == startOfText
-              # Assume it was addressed to us even if it wasn't
-              if not robotIsNamed
-                text = "#{@_robot_name} #{text}"     # If this is a DM, pretend it was addressed to us
-     else
-        text="Sorry this command executes only in teststuff channel"
+        # special handling for message text when inside a DM conversation
+        if conversationInfo.is_im
+          startOfText = if text.indexOf("@") == 0 then 1 else 0
+          robotIsNamed = text.indexOf(@_robot_name) == startOfText || text.indexOf(@_robot_alias) == startOfText
+          # Assume it was addressed to us even if it wasn't
+          if not robotIsNamed
+            text = "#{@_robot_name} #{text}"     # If this is a DM, pretend it was addressed to us
 
         @text = text
         cb()
