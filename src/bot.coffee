@@ -94,11 +94,14 @@ class SlackBot extends Adapter
   ###
   reply: (envelope, messages...) ->
     # TODO: if the sender is interested in the completion, the last item in `messages` will be a function
-    for message in messages
-      if message isnt ""
-        # TODO: channel prefix matching should be removed
-        message = "<@#{envelope.user.id}>: #{message}" unless envelope.room[0] is "D"
-        @client.send envelope, message
+    if messages:
+        for message in messages
+          if message isnt ""
+            # TODO: channel prefix matching should be removed
+            message = "<@#{envelope.user.id}>: #{message}" unless envelope.room[0] is "D"
+            @client.send envelope, message
+    else
+        @client.send(c,"Sorry this command executes only in teststuff channel")
 
   ###*
   # Hubot is setting the Slack conversation topic
@@ -303,15 +306,15 @@ class SlackBot extends Adapter
       # after it is received. If the reaction is to a message, then the `event.item.channel` contain a conversation ID.
       # Otherwise reactions can be on files and file comments, which are "global" and aren't contained in a
       # conversation. In that situation we fallback to an empty string.
-      if event.channel_id in ['C0GR1N60Y','C4WENANJ1','DNU7DR2CV']
-        user.room = event.channel_id
+      user.room = event.channel_id
 
       @robot.logger.debug "Received file_shared message from: #{user.id}, file_id: #{event.file_id}"
       @receive new FileSharedMessage(user, event.file_id, event.event_ts)
 
 
     # NOTE: we may want to wrap all other incoming events as a generic Message
-    # else
+    else
+        return "Sorry this command will execute only in teststuff channel"
 
   ###*
   # Callback for fetching all users in workspace. Delegates to `updateUserInBrain()` to write all users to Hubot brain
