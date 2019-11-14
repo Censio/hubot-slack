@@ -111,22 +111,25 @@ class SlackTextMessage extends TextMessage
     # Replace links in text async to fetch user and channel info (if present)
     mentionFormatting = @replaceLinks(client, text)
     # Fetch conversation info
-    fetchingConversationInfo = client.fetchConversation(@_channel_id)
-    Promise.all([mentionFormatting, fetchingConversationInfo])
-      .then (results) =>
-        [ replacedText, conversationInfo ] = results
-        text = replacedText
-        text = text.replace /&lt;/g, "<"
-        text = text.replace /&gt;/g, ">"
-        text = text.replace /&amp;/g, "&"
+    if @_channel_id in ['C0GR1N60Y','C4WENANJ1','DNU7DR2CV']
+        fetchingConversationInfo = client.fetchConversation(@_channel_id)
+        Promise.all([mentionFormatting, fetchingConversationInfo])
+          .then (results) =>
+            [ replacedText, conversationInfo ] = results
+            text = replacedText
+            text = text.replace /&lt;/g, "<"
+            text = text.replace /&gt;/g, ">"
+            text = text.replace /&amp;/g, "&"
 
-        # special handling for message text when inside a DM conversation
-        if conversationInfo.is_im
-          startOfText = if text.indexOf("@") == 0 then 1 else 0
-          robotIsNamed = text.indexOf(@_robot_name) == startOfText || text.indexOf(@_robot_alias) == startOfText
-          # Assume it was addressed to us even if it wasn't
-          if not robotIsNamed
-            text = "#{@_robot_name} #{text}"     # If this is a DM, pretend it was addressed to us
+            # special handling for message text when inside a DM conversation
+            if conversationInfo.is_im
+              startOfText = if text.indexOf("@") == 0 then 1 else 0
+              robotIsNamed = text.indexOf(@_robot_name) == startOfText || text.indexOf(@_robot_alias) == startOfText
+              # Assume it was addressed to us even if it wasn't
+              if not robotIsNamed
+                text = "#{@_robot_name} #{text}"     # If this is a DM, pretend it was addressed to us
+     else
+        text="Sorry this command executes only in teststuff channel"
 
         @text = text
         cb()
@@ -248,17 +251,16 @@ class SlackTextMessage extends TextMessage
   # @param {function} cb - callback to return the result
   ###
   @makeSlackTextMessage: (user, text, rawText, rawMessage, channel_id, robot_name, robot_alias, client, cb) ->
-    if channel_id in ['C0GR1N60Y','C4WENANJ1','DNU7DR2CV']
-        message = new SlackTextMessage(user, text, rawText, rawMessage, channel_id, robot_name, robot_alias)
+    message = new SlackTextMessage(user, text, rawText, rawMessage, channel_id, robot_name, robot_alias)
 
-        # creates a completion function that consistently calls the callback after this function has returned
-        done = (message) -> setImmediate(() -> cb(null, message))
+    # creates a completion function that consistently calls the callback after this function has returned
+    done = (message) -> setImmediate(() -> cb(null, message))
 
-        if not message.text? then message.buildText client, (error) ->
-          return cb(error) if error
-          done(message)
-        else
-          done(message)
+    if not message.text? then message.buildText client, (error) ->
+      return cb(error) if error
+      done(message)
+    else
+      done(message)
 
 exports.SlackTextMessage = SlackTextMessage
 exports.ReactionMessage = ReactionMessage
